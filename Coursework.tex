@@ -1,0 +1,1011 @@
+% !TEX TS-program = pdflatex
+% !TEX encoding = UTF-8 Unicode
+\documentclass[12pt]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[english,ukrainian]{babel}
+
+\usepackage[pdftex]{graphicx}
+\usepackage{pdfpages}
+\usepackage[a4paper,margin=2cm]{geometry}
+
+%% Useful packages
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{systeme}
+\usepackage{titletoc}
+\usepackage{array}
+\usepackage{subfig}
+\usepackage[font=small,labelfont=bf]{caption}
+\usepackage{pst-node}
+%\usepackage{auto-pst-pdf}
+\usepackage{tikz-cd} 
+\usepackage{amsfonts} 
+\usepackage{listings}
+\usepackage{amsthm}
+\usepackage{etoolbox}
+
+\usepackage{minted}    %% package for inserting code
+\usemintedstyle{perldoc} %{manni}
+\setminted{fontsize=\footnotesize}
+
+\newtheorem{definition}{Означення}
+\newtheorem{statement}{Твердження}
+\newtheorem{theorem}{Теорема}
+\newtheorem{lema}{Лема}
+\newtheorem{collocation}{Наслідок}
+
+\setlength\abovecaptionskip{-5pt}
+
+%\numberwithin{theorem}{section}
+%\numberwithin{collocation}{theorem}
+
+%\titleformat*{\section}{\huge\bfseries}
+%\titleformat*{\subsection}{\large\bfseries}
+
+\makeindex
+\begin{document}
+	\begin{titlepage}
+		\begin{center}
+			{\largeКИЇВСЬКИЙ НАЦІОНАЛЬНИЙ УНІВЕРСИТЕТ ІМЕНІ ТАРАСА ШЕВЧЕНКА}\\
+			{\Large Механіко-математичний факультет \\
+				Кафедра геометрії, топології та динамічних систем}
+		\end{center}
+		\leavevmode \\
+		\leavevmode \\
+		\leavevmode \\
+		\leavevmode \\
+		\begin{center}
+			{\LARGE  Курсова робота\\}
+			на тему: \\
+			\leavevmode \\
+			{\Huge \textbf{Топологічна стійкість усереднень функцій двох змінних}}			
+		\end{center}
+		\leavevmode \\
+		\leavevmode \\
+		\leavevmode \\
+		\leavevmode \\	
+		\leavevmode \\
+		\leavevmode \\
+		\leavevmode \\
+		\leavevmode \\	
+		\leavevmode \\
+		\leavevmode \\
+		\leavevmode \\
+		\leavevmode \\     
+		\begin{tabular}{p{7cm}p{12cm}}
+			\, & {\large Студентки I курсу магістратури} \\
+			\, & {\large Напряму підготовки ``Математика''} \\
+			\, & {\large Багрій А. Г.} \\
+			\, & \, \\
+			\, & {\large Науковий керівник:} \\
+			\, & {\large доктор фізико-математичних наук, } \\
+			\, & {\large професор Пришляк О. О.} \\
+		\end{tabular}
+		\leavevmode \\
+		\leavevmode \\
+		\leavevmode \\
+		\leavevmode \\
+		\vfill
+		\begin{center}
+			{\Large Київ 2022}
+		\end{center}
+	\end{titlepage}
+	
+\section{Вступ}
+	
+
+\hspace{0.5cm} Лінійний фільтр – це така динамічна система, яка застосовує певний лінійний оператор до вхідного сигналу для виділення або відкидання певних частот сигналу та інших функцій по обробці вхідного сигналу. Лінійні фільтри широко застосовуються в електроніці, цифровій обробці сигналів і зображень, в оптиці, теорії управління та інших областях. 
+
+Нехай вхідний сигнал задано кусково-лінійною фунцією $f:\mathbb{R}^2\rightarrow \mathbb{R}$ із скінченною кількістю локальних екстремумів. Лінійний фільтр визначається імпульсною перехідною функцією $h(x,y)$. Тоді дія лінійного фільтру на вхідний сигнал визначається як згортка $f(x,y)\ast h(x,y)$. Якщо $\iint_{\mathbb{R}}^{}h(t,s)dt ds=1$, то $h(x,y)$ можна розглядати як щільність певної ймовірнісної міри, а згортку $f(x,y)\ast h(x,y)$ – як усереднення по цій мірі.
+
+При застосуванні фільтру важливим є питання збереження форми вхідного сигналу. Необхідно визначити, які умови на вхідну функцію $f$ та міру гарантують топологічну еквівалентність між функцією $f$ та її усередненням $f\ast h$. Зокрема, вимагається, щоб кількість екстремумів усереднення $f\ast h$ зберігалась.
+
+Нехай $\mu$ певна ймовірнісна міра на $X=[0,1]\times [0,1]$. Тоді для будь-якої вимірної функції $f:\mathbb{R}^2\rightarrow \mathbb{R}$ та числа $\alpha$ визначається вимірна функція $f_{\alpha}:\mathbb{R}^2\rightarrow \mathbb{R}$:
+
+\begin{equation} 
+	\label{int_averaging}
+	f_\alpha(x,y)= \int_{X}^{} f(x-u\alpha, y-v\alpha)d\mu,
+\end{equation}
+
+\hspace{-0.6cm}яка називається \emph{$\alpha$-усередненням} функції відносно міри $\mu$ із заданим параметром $\alpha$. 
+
+Розглянемо випадок, коли $\mu$ – дискретна ймовірнісна міра на $X=[0,1]\times [0,1]$ зі скінченним носієм. Тобто $\exists t_{1},...,t_{k} \in X, t_{i}=(u_{i},v_{i}), i=\overline{1,k}$ – точки з $X$ такі, що для довільної борелівської підмножини $A\in X$: 
+$$\mu(A)=\sum_{t_i \in A}^{}\mu(t_i).$$
+
+Тоді усереднення функції $f:\mathbb{R}^2\rightarrow \mathbb{R}$ матиме вигляд 
+
+\begin{equation} 
+	\label{discrete_averaging}
+	f_\alpha(x,y)=\sum_{i=1}^{k}f(x-u_{i}\alpha, y-v_{i}\alpha)\mu(t_{i}).
+\end{equation}
+
+\begin{definition}
+	Дві неперервні фунції $f:\mathbb{R}^2\rightarrow \mathbb{R}$ та $g:\mathbb{R}^2\rightarrow \mathbb{R}$ називаються \textbf{топологічно еквівалентними}, якщо існують гомеоморфізми, що зберігають орієнтацію 
+\end{definition}
+
+\begin{equation} 
+	\phi:\mathbb{R}^2\rightarrow \mathbb{R}^2, \quad \psi:\mathbb{R}\rightarrow \mathbb{R}
+\end{equation} такі, що $\psi \circ f=g \circ \phi$, тобто наступна діаграма є комутативною
+
+\[\begin{tikzcd}
+	\mathbb{R}^2 \arrow{r}{f} \arrow[swap]{d}{\phi} & \mathbb{R} \arrow{d}{\psi} \\
+	\mathbb{R}^2 \arrow{r}{g} & \mathbb{R}
+\end{tikzcd}
+\]
+
+\begin{definition}
+	Нехай $f:\mathbb{R}^2 \rightarrow \mathbb{R}$ – неперервна функція і $\mu$ – ймовірнісна міра на $[-1,1]\times[-1,1]$. Функція $f$ називається \textbf{топологічно стійкою} відносно усереднень по мірі $\mu$, якщо $\exists \varepsilon>0$ таке, що для будь-якого $\alpha \in [0, \varepsilon)$ функції $f$ та $f_{\alpha}$ є топологічно еквівалентними. Зокрема, якщо $\alpha=0$, то $f_\alpha=f$.
+\end{definition}
+
+% 2
+\setcounter{secnumdepth}{1}
+\section{Деякі результати про топологічну стійкість функцій}
+
+Введемо деякі поняття, які необхідні для дослідження усереднень функцій.
+
+\begin{definition}
+	Назвемо \textbf{опуклим клітковим розбиттям} простору $\mathbb{R}^2$ сім`ю опуклих многокутників $C=\{c_i\}_{i \in \mathbb{N}}$, яке задовольняє наступним умовам:
+	
+	\begin{enumerate}
+		\item $\bigcup\limits_{i}^{} c_{i}=\mathbb{R}^2$,
+		\item $int(c_i) \cap int(c_j)=\emptyset, \forall c_i, c_j, i,j \in \mathbb{N}$,
+		\item $c_i \cap c_j$ – спільне ребро, спільна вершина або порожня множина.
+	\end{enumerate}
+\end{definition}
+
+\begin{definition}
+	\textbf{k-скелет} розбиття $C$ визначається наступним чином:
+	\begin{itemize}
+		\item $C^0$ – вершини,
+		\item $C^1$ – внутрішність ребра,
+		\item $C^2$ – внутрішність граней.
+	\end{itemize}
+\end{definition}
+
+Через $S \wedge Q$ позначимо опукле кліткове розбиття, що складається з усіх непорожніх попарних перетинів клітин, тобто
+\begin{equation}
+	S \wedge Q = \{s_{i} \cap q_{j}\}_{i,j \in \mathbb{N}}.
+\end{equation}
+
+Розглянемо розбиття $C$, що зсунуте на певний вектор $\delta_i=(u_i,v_i), i\leq k, k\in\mathbb{N}$. Позначимо його як $C+\delta_i=\{u_j+\delta_i\}_{i,j\in\mathbb{N}}$. Тоді можна визначити таке опукле кліткове розбиття, що утворене непорожніми перетинами клітин для всіх зсувів $\delta_i$: $C+\delta:=\bigwedge_{i,j} (c_j+\delta_i)$.
+
+\begin{definition}
+	Функція $f:\mathbb{R}^2\rightarrow \mathbb{R}$ називається \textbf{кусково-лінійною} відносно розбиття $C(f)$, якщо на кожній клітині $c_i \in C(f)$ задана лінійна функція $f_i$:
+
+\begin{equation}
+	f(x,y)=
+	\begin{cases}
+		&f_{1}(x,y), \quad (x,y) \in c_1,\\
+		&f_{2}(x,y), \quad (x,y) \in c_2,\\
+		&\vdots\\
+		&f_{n}(x,y), \quad (x,y) \in c_n,\\
+	\end{cases}\
+\end{equation}
+$n \in \mathbb{N}, n\geq 3, \ f_i(x,y)=f_j(x,y) \ \forall (x,y)\in c_i \cap c_j$.
+	
+\end{definition}
+
+
+\begin{statement}
+	Нехай $f:\mathbb{R}^2 \rightarrow \mathbb{R}$ – кусково-лінійна функція, $C(f)$ – її опукле кліткове розбиття. Тоді якщо $(x, y) \in R^2$ – точка локального екстремуму заданої функції і $\exists c \in C(f) \text{– відкрита клітина:}\ x \in c$, то $f(x,y)=f(\bar{c})$, тобто екстремум досягається на замиканні клітини.
+\end{statement}
+
+Нехай $\mu$ – дискретна ймовірнісна міра на $[-1,1]\times[-1,1]$ зі скінченним носієм $t_{1},...,t_{k}$, $p_{i}:=\mu (t_{i}): \sum_{i=1}p_i=1$. Усереднення \eqref{discrete_averaging} – це лінійна комбінація функцій $f_{i}(x,y)$, початок координат яких зміщений у точки $\omega^\alpha_i:=(u_{i}\alpha, v_{i}\alpha)$, із відповідними коефіцієнтами $p_{i}$. Позначимо ці функції як $f^i(x, y):=f(x-u_{i}\alpha, y-v_{i}\alpha)$. Вони визначені на розбитті $c^\alpha_i=\{c_j+w^\alpha_i\}_{j\in \mathbb{N}}$. Тоді
+
+\begin{equation}
+	f^i(x,y)=
+	\begin{cases}
+		&f^i_{1}(x,y), \quad (x,y) \in c_1+w^\alpha_i,\\
+		&f^i_{2}(x,y), \quad (x,y) \in c_2+w^\alpha_i,\\
+		&\vdots\\
+		&f^i_{n}(x,y), \quad (x,y) \in c_n+w^\alpha_i,\\
+	\end{cases}\
+\end{equation} $i=\overline{1,k}$. Лінійна комбінація кусково-лінійних функцій – це також кусково-лінійна функція. Отже, $f_\alpha$ – кусково-лінійна функція відносно опуклого кліткового розбиття $C(f_\alpha)$.
+
+Функція $f_\alpha$ може набувати свого мінімуму на замиканні обмежених клітин з $C^\alpha$ або на обмежених k-скелетах розбиття.
+
+\begin{definition}
+	Функція $f$ називається \textbf{однорідною}, якщо $f(tx,ty)=tf(x,y)\ \forall t\geq 0$.
+\end{definition}
+
+%Розглянемо множину усіх перетинів векторів $l^i_j, i=\overline{1,k}, j=\overline{1,n}$ і позначимо її $I$. Позначимо множину усіх точок $(u_{i}\alpha, v_{i}\alpha)$ як $O$. Розглянемо опуклу оболонку Conv$(I \cup O)$ множини точок $I \cup O$. Тобто таку мінімальну опуклу множину, що містить $I \cup O$. Якщо $\exists x_p, x_q \in I \cup O, p,q \in \mathbb{N}$ такі, що $x_p \in l^i_j$ і $x_p \in l^i_j$ для деякого $l^i_j$, то $x_p, x_q$ утворюють відрізок $[x_p, x_q]=\{ x \in \mathbb{R} \vert x_p \leq x \leq x_q \} \subset \text{Conv}(I \cup O)$. Якщо існують такі відрізки $v_1, v_2,...,v_n \subset \text{Conv}(I \cup O), n\geq 3$, утворені точками з $I \cup O$, що з`єднані попарно і утворюють замкнений шлях, то ці відрізки утворюють многокутник, який належить Conv$(I \cup O)$. Позначимо усіх замкнені підмножини, що містяться у Conv$(I \cup O)$ як C. Її елементами будуть точки, відрізки, трикутники і т.д.
+
+\begin{theorem}
+	Нехай $f_\alpha:\mathbb{R}^2\rightarrow \mathbb{R}$ – кусково-лінійна функція з розбиттям $C(f_\alpha)$, а $f_\beta:\mathbb{R}^2\rightarrow \mathbb{R}$ – кусково-лінійна функція з розбиттям $C(f_\beta)$, $\alpha, \beta>0$. Тоді $C\big(f_\alpha(x,y)\big)= C\big(\frac{\alpha}{\beta}f_\beta(\frac{\beta x}{\alpha}, \frac{\beta y}{\alpha})\big) \ \forall \alpha, \beta>0$.
+\end{theorem}
+
+\begin{proof}
+	
+	%\begin{equation}
+	%	C(f_\alpha(x,y))=\phi_\alpha(C(f_{\alpha_0}(x,y)))=\{\phi_\alpha(c): \ c \in C(f_{\alpha_0})\}
+	%\end{equation}
+	
+	Введемо функцію $\phi_\alpha:\mathbb{R}^2\rightarrow\mathbb{R}^2:\ \phi_\alpha(x,y)=(\alpha x,\alpha y)$. Для заданої міри $\mu$ та параметру $\alpha$ усереднення має вигляд
+	
+	\begin{equation} 
+		f_\alpha(x,y)=\sum_{i=1}^{k}f(x-u_{i}\alpha, y-v_{i}\alpha)p_{i}.
+	\end{equation}
+	
+	При $\alpha=1$ маємо
+	
+	\begin{equation} 
+		f_1(x,y)=\sum_{i=1}^{k}f(x-u_{i}, y-v_{i})p_i.
+	\end{equation}
+	
+	Для $\forall \alpha>0$ з однорідності маємо
+	
+	\begin{equation} 
+		f_1(\alpha x,\alpha y)=\sum_{i=1}^{k}f(\alpha x-u_{i}, \alpha y-v_{i})p_i=\alpha \sum_{i=1}^{k}f(x-\frac{u_{i}}{\alpha}, y-\frac{v_{i}}{\alpha})p_i=\alpha f_{\frac{1}{\alpha}}.
+	\end{equation}
+	
+	\begin{equation} 
+		\alpha f_{\frac{1}{\alpha}}=f_1 \circ \phi_{\alpha} \implies f_{\alpha}=\alpha f_1 \circ \phi_{\frac{1}{\alpha}}.
+	\end{equation}
+	
+%	$f_{\alpha_0} := f_1 \circ \phi_{\frac{1}{\alpha'}} \implies C(f_\alpha)=\alpha C(f_{\alpha_0})$.
+	
+	Тоді $f_1=\frac{1}{\alpha}f_\alpha \circ \phi_\alpha$. Аналогічно $\forall \beta>0$ $f_1=\frac{1}{\beta}f_\beta \circ \phi_\beta$.
+	
+	\begin{equation} 
+		\frac{1}{\alpha}f_\alpha \circ \phi_\alpha=\frac{1}{\beta}f_\beta \circ \phi_\beta \implies f_\alpha=\frac{\alpha}{\beta}f_\beta \circ \phi_\beta \circ \phi_\frac{1}{\alpha}=\frac{\alpha}{\beta} f_\beta(\frac{\beta x}{\alpha},\frac{\beta y}{\alpha}).
+	\end{equation}
+	
+	Тоді $C\big(f_\alpha(x,y)\big)=C\big(\frac{\alpha}{\beta} f_\beta(\frac{\beta x}{\alpha},\frac{\beta y}{\alpha})\big).$
+	
+\end{proof}
+
+\begin{collocation}
+	Нехай $f:\mathbb{R}^2\rightarrow \mathbb{R}$ – однорідна кусково-лінійна функція на розбитті $C(f)$. Якщо $\exists \alpha_0>0$ таке, що $f_{\alpha_0}$ має один екстремум, то $\forall \alpha>0, \alpha<\alpha_0$ $f_\alpha$ теж має один екстремум.
+\end{collocation}
+
+\begin{collocation}
+	Якщо $f:\mathbb{R}^2\rightarrow \mathbb{R}$ – однорідна кусково-лінійна функція і $\exists \alpha_0>0$ таке, що $\exists!(x,y)\in \mathbb{R}^2$ – точка локального екстремуму $f_\alpha$, то $f$ – топологічно стійка відносно усереднення по мірі $\mu$ для $\forall \alpha\leq\alpha_0, \alpha>0$.
+\end{collocation}
+
+\begin{collocation}
+	Якщо $f:\mathbb{R}^2\rightarrow \mathbb{R}$ – однорідна кусково-лінійна функція і $f$  не є топологічно стійкою відносно усереднення по мірі $\mu$, то $\forall \alpha>0 \ \exists k\in \{1,2\}:  \exists c_i\in C^k: \ f_\alpha$ приймає постійне значення на $c_i$.
+%	 $\exists k\in \{0,1,2\}, \ C^k\in C^\alpha, \exists g:\mathbb{R}^2\rightarrow\mathbb{R}: g(C^k)=m$.
+\end{collocation}
+
+
+% 3
+\section{Приклади} \label{quad}
+
+
+%Для зручності демонстрації прикладів розглянемо лінії рівня функції $f$, тобто такі множини $L_c(f)=\{ (x,y): f(x,y)=c \}, c \in \mathbb{R}$.
+
+\subsection{Приклад 1}
+
+Розглянемо функцію
+
+\begin{equation}
+	\label{mod_function}
+	f(x,y)=|x|+|y|, \quad x,y \in \mathbb{R}.
+\end{equation}
+
+Дана функція має глобальний мінімум у точці $(0,0)$. Зафіксуємо носій ймовірнісної міри у точках $t_1=(1, 1), t_2=(1, -1), t_3=(-1, -1), t_4=(-1, 1), p_{i}=1/4, i=\overline{1,4}$. Нехай $\alpha=0.5$. Тоді усереднення заданої функції матиме вигляд
+
+\begin{equation}
+	f_\alpha(x,y)=
+	\begin{cases}
+		&-x-y, \quad x,y \in (-\infty,-\alpha), \\
+		&-x+\alpha, \quad x \in (-\infty,-\alpha), y \in [-\alpha,\alpha], \\
+		&-y+\alpha, \quad x \in [-\alpha,\alpha], y \in (-\infty,-\alpha), \\
+		&2\alpha, \quad x,y \in [-\alpha,\alpha], \\
+		&-x+y, \quad x \in (-\infty,-\alpha), y \in (\alpha,+\infty),\\
+		&y+\alpha, \quad x \in [-\alpha,\alpha], y \in (\alpha,+\infty), \\
+		&x-y, \quad x \in (\alpha,+\infty), y \in (-\infty, -\alpha), \\
+		&x+\alpha, \quad x \in (\alpha,+\infty), y \in [-\alpha,\alpha], \\
+		&x+y, \quad x,y \in (\alpha,+\infty). \\
+	\end{cases}\
+\end{equation}
+
+Дійсно, усереднення не зберігає мінімум заданої функції з точністю до гомеоморфізму – на прямокутнику $[-\alpha,\alpha] \times [-\alpha,\alpha]$ $f_\alpha$ приймає стале значення $2\alpha$.
+
+При візуальному аналізі результатів зручно розглядати лінії рівня функцій та вектори, на яких задаються вони задаються. Тобто множини $L_c(f)=\{ (x,y): f(x,y)=c \}, c \in \mathbb{R}$. Для подальшої демонстрації результатів використовується програма, написана на Python, яка візуалізує описану вище множину С.
+
+\begin{figure}[h]
+	\centering \includegraphics[scale=0.8]{f_mod}
+	\caption{Зелений графік – вектори початкової функції, сині графіки – вектори функцій $f^i$, бірюзові лінії формують опуклу обонку}
+	\label{f_mod_hull}
+\end{figure}
+
+Проаналізувавши отриманий результат та рисунок \ref{f_mod_hull}, бачимо, що множина C складається із 4 точок, 4 відрізків та одного прямокутнику. Мінімум $f_\alpha$ досягається на прямокутнику.
+
+\newpage
+Тепер проаналізуємо поведінку усереднення функції неперервно змінюючи $p_{1}, p_{2}, p_{3}$ при фіксованому $p_{4}=0.25$ врахочуючи, що $p_{1}+p_{2}+p_{3}+p_{4}=1$. Зафіксуємо ітераційний крок $s=0.005$ і будемо визначати міру як $s \leq p_{1} \leq 1-p_{4}, s \leq p_{2} \leq 1-p_{4}-p_{1}, p_{3}=1-p_{4}-p_{1}-p_{2}$. Маємо наступний ймовірнісний симплекс:
+
+\begin{figure}[!ht]
+	\centering \includegraphics[scale=0.4]{f_mod_p}
+	\caption{Зелені точки на симплексі відповідають такій мірі, що усереднення зберігає один мінімум. Червоні точки навпаки – такій, де усереднення має не один мінімум.}
+	\label{f_mod_p}
+\end{figure}
+
+
+Міра $(p_{1}, p_{2}, p_{3})$ тут визначає дві прямі, що перетинаються. При чому, точка перетину відповідає мірі $p_{i}=1/4, i=\overline{1,4}$, де мінімум усереднення – це прямокутник. Відповідно, для інших точок цих прямих мінімум усереднення – це якийсь відрізкок з множини C.
+
+\subsection{Приклад 2}
+
+Розглянемо іншу конфігурацію. Нехай
+
+\begin{equation}
+	f(x,y)=
+	\begin{cases}
+		&2x+y, \quad x \geq 0, x \geq -y, \\
+		&-2x+y, \quad x \leq 0, x \leq y, \\
+		&-y, \quad x \geq y, x \leq -y. \\
+	\end{cases}\
+\end{equation}
+
+Лінії рівня цієї функції мають наступний вигляд:
+
+\begin{figure}[h]
+	\centering \includegraphics[scale=0.5]{f_triangle_level_set}
+	\caption{f(x,y)}
+	\label{f_triangle_level_set}
+\end{figure}
+
+Очевидно, що функція має глобальний мінімум у точці $(0,0)$. Зафіксуємо носій ймовірнісної міри у точках $t_1=(1, 1), t_2=(1, -1), t_3=(-1, -1), p_{1}=0.3, p_{2}=0.5, p_{3}=0.2$. Нехай $\alpha=0.5$. 
+
+
+\begin{figure}[h]
+	\centering \includegraphics[scale=0.7]{f_triangle_hull}
+	\caption{Зелений графік – вектори початкової функції, сині графіки – вектори функцій $f^i$, бірюзові лінії формують опуклу обонку}
+	\label{f_triangle_hull}
+\end{figure}
+
+З рисунку \ref{f_triangle_hull} видно, що множина C cкладається з 5 точок, 6 відрізків і одного трикутника. Подальший аналіз проведемо за допомогою іншої програми, що написана на Python. 
+
+
+Розглянемо графік усереднення $f_\alpha$ в $\mathbb{R}^3$. Як бачимо, усереднення не зберігає мінімум початкової функції, натомість, усереднення набуває мінімум на одному із відрізків з C.
+
+
+\begin{figure}[h]
+	\centering \includegraphics[scale=0.4]{f_triangle_3d_av}
+	\caption{1-ий графік – це "погляд" на функцію з площини Oyz, 1-ий графік – це "погляд" на функцію з площини Oyx }
+	\label{f_triangle_3d_av}
+\end{figure}
+
+\newpage
+\subsection{Приклад 3}
+
+Розглянемо таку функцію
+
+\begin{equation}
+	f(x,y)=
+	\begin{cases}
+		&\frac{3x}{2}+y, \quad x \geq 0, x \geq -2y, \\
+		&\frac{x}{3}-\frac{4y}{3}, \quad x \leq 0, x \leq y, \\
+		&-2x+y, \quad x \geq y, x \leq -2y. \\
+	\end{cases}\
+\end{equation}
+
+Лінії рівня цієї функції мають наступний вигляд:
+
+\begin{figure}[h]
+	\centering \includegraphics[scale=0.4]{f_non_sym_triangle_level_set}
+	\caption{f(x,y)}
+	\label{f_non_sym_triangle_level_set}
+\end{figure}
+
+Зафіксуємо носій міри аналогічно до попереднього прикладу у точках $t_1=(1, 1), t_2=(1, -1), t_3=(-1, -1)$. Проте тепер проаналізуємо поведінку усереднення неперервно змінюючи $p_{1}, p_{2}, p_{3}$ врахочуючи, що $p_{1}+p_{2}+p_{3}=1$. Зафіксуємо ітераційний крок $s=0.005$ і будемо визначати міру як $s \leq p_{1} \leq 1, s \leq p_{2} \leq 1-p_{1}, p_{3}=1-p_{1}-p_{2}$. Тоді цікавим є наступний результат. Для даної функції в заданих точках міри усереднення буде завжди зберігати мінімум. Це можна побачити подивившись на наступний ймовірнісний симплекс:
+
+\begin{figure}[h]
+	\centering \includegraphics[scale=0.3]{f_triangle_p}
+	\caption{Ймовірнісний симплекс}
+	\label{f_triangle_p}
+\end{figure}
+
+Такі результати показують, що існують певні достатні умови для функції та заданої міри, які гарантують топологічну стійкість.
+
+
+\newpage
+	% 4
+	\section{Висновки}	
+	
+В даній роботі була сформульована задача усереднення функцій двох змінних відносно дискретної ймовірносної міри із заданим параметром. Була проаналізована поведінка усереднень для різних функцій за допомогою теоретичного підходу, а також із допомогою написаних комп`ютерних програм на мові Python. Отримані загальні результати поведінки усереднень, які надалі допоможуть вивести широки достатні умови для топологічної стійкості функцій.
+\\
+\\
+Хочу висловити подяку члену-кореспонденту НАН України, доктору фізико-математичних наук, професору Максименко С. І. за запропоновану задачу, а також за постійне наставництво та допомогу при роботі з даною темою.
+	
+
+	%5
+	\begin{thebibliography}{99}
+		\addcontentsline{toc}{chapter}{Література}
+		
+		\bibitem{main} 
+		Maksymenko, S. I.; Marunkevich, O. V. Topological stability of averagings of functions. Mat. Zh. 68 (2016), no. 5, 625-633 Ukrainian Math. J. 68 (2016), no. 5, 707-717 pp.
+		
+		\bibitem{measure}
+		Kolmogorov, A. N.; Fomin, S. V. Элементы теории функций и функционального анализа. Fourth edition, revised. Izdat. ``Nauka'', Moscow, 1976. 543 pp.
+		
+
+	\end{thebibliography}
+
+\newpage
+\section*{Додаток}
+
+\subsection{Програма 1}
+	
+\begin{minted}{python}
+	
+	import numpy as np
+	import matplotlib.pyplot as plt
+	import sys
+	import import_ipynb
+	
+	from matplotlib import cm
+	from matplotlib.ticker import LinearLocator
+	
+	np.set_printoptions(threshold=sys.maxsize)
+	
+	figure_size = 10
+	plt.rcParams["figure.figsize"] = (figure_size, figure_size)
+	
+	x_interval = [-1, 1]
+	y_interval = [-1, 1]
+	
+	step_interval = 100
+	
+	alpha = 0.5
+	epsilon = 10e-10
+	
+	# Functions
+	
+	'''
+	t - vector of points
+	t_k = (u_k, v_k)
+	
+	p - vector of coefficients
+	sum(p1,...,pn) = 1
+	
+	alpha > 0
+	'''
+	def f_a(x, y, t, p, alpha):
+		f_a = np.zeros_like(x)
+		
+		for i in range(0, len(t)):
+			f_a += f(x[:] - t[i, 0] * alpha, 
+				y[:] - t[i, 1] * alpha) * p[i]
+		
+		return f_a
+	
+	'''
+	Calculates the value of the function
+	and its averaging
+	
+	Returns two vectors
+	'''
+	def calc_f(t, p, alpha):
+		x = np.linspace(x_interval[0], x_interval[1], step_interval)
+		y = np.linspace(y_interval[0], y_interval[1], step_interval)
+		z = []
+		
+		X, Y = np.meshgrid(x, y)
+		
+		zs = np.array(f(np.ravel(X), np.ravel(Y)))
+		Z = zs.reshape(X.shape)
+		
+		zs_a = np.array(f_a(np.ravel(X), np.ravel(Y), t, p, alpha))
+		Z_a = zs_a.reshape(X.shape)
+		
+		return Z, Z_a
+		
+	'''
+	Function for finding and comparing
+	minimum value of the input function
+	and its averaging
+	
+	Returns bool value whish indicates
+	whether the averaging saves the extrema
+	'''
+	def find_min(Z, Z_alpha, print_result = False):
+		elements, count = np.unique(np.floor(Z_alpha/epsilon)
+		.astype(int), return_counts = True)
+		duplicates = elements[count > 1]
+		
+		Z_min = Z.min()
+		Z_a_min = Z_alpha.min()
+		
+		duplicate_min = np.any(duplicates == np.floor(
+		Z_a_min/epsilon).astype(int))
+		
+		if print_result:
+		print('-------')
+		
+		print('Z_min =', Z_min)
+		print('Z_a_min =', Z_a_min)
+		
+		print('\nPreserves min =', not duplicate_min)
+		
+		print()
+		
+		return not duplicate_min
+	
+	'''
+	Function for plotting the surface of the function
+	
+	t - vector of points
+	t_k = (u_k, v_k)
+	
+	p - vector of coefficients
+	sum(p1,...,pn) = 1
+	
+	alpha > 0
+	
+	is_averaging - indicator if we should plot the input function of its averaging
+	
+	UTILITIES:
+	show_from_two_angles - bool variable that indicates if to show plot
+	from the Ox & Oy 
+	show_colorbar - bool variable that indicates if to show colorbar
+	xy_angle - observation angle of XY plane
+	z_angle - observation angle of Z ax
+	title - title of the plot
+	'''
+	def plot_surface(t, p, alpha, is_averaging = False, 
+		show_from_two_angles = False,
+		xy_angle = 0, z_angle = 0, title = ''):
+		
+		show_colorbar = True
+		
+		if show_from_two_angles:
+			fig, ax = plt.subplots(nrows=1, ncols=2, 
+			figsize=(20,20), subplot_kw={"projection": "3d"})
+		else:
+			fig, ax = plt.subplots(
+			subplot_kw={"projection": "3d"})
+		
+		x = np.linspace(x_interval[0], x_interval[1], step_interval)
+		y = np.linspace(y_interval[0], y_interval[1], step_interval)
+		z = []
+		
+		X, Y = np.meshgrid(x, y)
+		
+		if is_averaging:
+			zs = np.array(f_a(np.ravel(X), np.ravel(Y), 
+				t, p, alpha))
+		else:
+			zs = np.array(f(np.ravel(X), np.ravel(Y)))
+		
+		Z = zs.reshape(X.shape)
+		
+		if show_from_two_angles:
+			for i in range(0, 2):
+				angle_to_rotate = 90
+		
+		if i == 1:
+			z_angle += angle_to_rotate
+		
+			ax[i].view_init(xy_angle, z_angle)
+			
+			surf = ax[i].plot_surface(X, Y, Z, cmap=cm.coolwarm,
+			linewidth=0, antialiased=False)
+			
+			ax[i].zaxis.set_major_locator(LinearLocator(10))
+			ax[i].zaxis.set_major_formatter('{x:.02f}')
+			
+			ax[i].set_xlabel('x')
+			ax[i].set_ylabel('y')
+		else:
+			ax.view_init(xy_angle, z_angle)
+		
+			surf = ax.plot_surface(X, Y, Z, cmap=cm.coolwarm,
+			linewidth=0, antialiased=False)
+			
+			ax.zaxis.set_major_locator(LinearLocator(10))
+			ax.zaxis.set_major_formatter('{x:.02f}')
+			
+			ax.set_xlabel('x')
+			ax.set_ylabel('y')
+		
+		if show_colorbar:
+			fig.colorbar(surf, shrink=0.2, aspect=10)
+		
+		plt.title(title)
+		plt.show()
+		
+		return Z
+		
+	'''
+	Function for finding and plotting the measure
+	of 4 points (with 1 fixed and 3 continuously changing)
+	where averaging of the function preserves extrema and where not
+	
+	t - vector of points
+	t_k = (u_k, v_k)
+	
+	alpha > 0
+	step > 0
+	
+	UTILITIES:
+	xy_angle - observation angle of XY plane
+	z_angle - observation angle of Z ax
+	
+	
+	Returns two distinct vectors:
+	with measure that preserves extrema and where not
+	'''
+	def test_4_measures(t, alpha, step = 0.05, 
+		xy_angle = 0, z_angle = 0):
+		p1 = p2 = p3 = 0.0
+		p4 = 0.25
+		
+		p_dif = 1 - p4
+		
+		number_of_dec = str(step)[::-1].find('.')
+		
+		P = np.empty(shape=(0,4), dtype=float)
+		
+		P_good = np.empty(shape=(0,4), dtype=float)
+		P_bad = np.empty(shape=(0,4), dtype=float)
+		
+		for p1 in np.arange(step, p_dif, step):
+			for p2 in np.arange(step, p_dif - p1, step):
+			
+				p3 = p_dif - p2 - p1
+				
+				p1 = float(f'{p1:.{number_of_dec}f}')
+				p2 = float(f'{p2:.{number_of_dec}f}')
+				p3 = float(f'{p3:.{number_of_dec}f}')
+				
+				if p3 < step or p2 < step:
+					continue
+				
+				p = [p1, p2, p3, p4]
+				
+				if any((P[:] == p).all(1)):
+					continue
+				
+				P = np.append(P, [p], axis=0)
+				
+				Z_f, Z_a = calc_f(t, p, alpha)
+				preserves = find_min(Z_f, Z_a)
+				
+				if preserves:
+					P_good = np.append(P_good, [p], 
+					axis=0)
+				else:
+					P_bad = np.append(P_bad, [p], 
+					axis=0)
+				
+				if preserves:
+					P_good = np.append(P_good, [p], 
+					axis=0)
+				else:
+					P_bad = np.append(P_bad, [p], 
+					axis=0)
+		
+		col = ['green' if any((P_good[:] == P[i,:]).all(1)) 
+			else 'red' for i in range(0, len(P))]
+		
+		fig = plt.figure()
+		
+		ax = fig.add_subplot(111, projection='3d')
+		ax.view_init(xy_angle, z_angle)
+		
+		ax.scatter(P[:,0], P[:,1], P[:,2], c=col, label='sd')
+		
+		ax.set_xlabel('p1')
+		ax.set_ylabel('p2')
+		ax.set_zlabel('p3')
+		
+		#print(P)
+		return P_good, P_bad
+	
+	'''
+	Function for finding and plotting the measure
+	of 3 points that are continuously changing
+	where averaging of the function preserves extrema and where not
+	
+	t - vector of points
+	t_k = (u_k, v_k)
+	
+	alpha > 0
+	step > 0
+	
+	UTILITIES:
+	xy_angle - observation angle of XY plane
+	z_angle - observation angle of Z ax
+	
+	
+	Returns two distinct vectors:
+	with measure that preserves extrema and where not
+	'''
+	def test_3_measures(t, alpha, step = 0.05, 
+		xy_angle = 0, z_angle = 0):
+		p1 = p2 = p3 = step
+		
+		p_dif = 1
+		
+		number_of_dec = str(step)[::-1].find('.')
+		
+		P = np.empty(shape=(0,3), dtype=float)
+		
+		P_good = np.empty(shape=(0,3), dtype=float)
+		P_bad = np.empty(shape=(0,3), dtype=float)
+		
+		for p1 in np.arange(step, p_dif, step): 
+			for p2 in np.arange(step, p_dif - p1, step):
+			
+				p3 = p_dif - p2 - p1
+				
+				p1 = float(f'{p1:.{number_of_dec}f}')
+				p2 = float(f'{p2:.{number_of_dec}f}')
+				p3 = float(f'{p3:.{number_of_dec}f}')
+				
+				if p3 < step or p2 < step:
+					continue
+				
+				p = [p1, p2, p3]
+				
+				if any((P[:] == p).all(1)):
+					continue
+				
+				P = np.append(P, [p], axis=0)
+				
+				Z_f, Z_a = calc_f(t, p, alpha)
+				preserves = find_min(Z_f, Z_a)
+				
+				if preserves:
+					P_good = np.append(P_good, [p], 
+						axis=0)
+				else:
+					P_bad = np.append(P_bad, [p], 
+						axis=0)
+				
+		col = ['green' if any((P_good[:] == P[i,:]).all(1))
+	 		else 'red' for i in range(0, len(P))]
+		
+		fig = plt.figure()
+		
+		ax = fig.add_subplot(111, projection='3d')
+		ax.view_init(xy_angle, z_angle)
+		
+		ax.scatter(P[:,0], P[:,1], P[:,2], c=col)
+		
+		ax.set_xlabel('p1')
+		ax.set_ylabel('p2')
+		ax.set_zlabel('p3')
+		
+		return P_good, P_bad
+	
+	'''
+	Function for demonstrating the result of averaging
+	analytically and visually
+	'''
+	def find_and_plot_averaging(t, p, alpha, show_from_two_angles = True, 
+		xy_angle = 0, z_angle = 0):
+		for i in range(0, len(p)):
+			p_set = p[i]
+			
+			Z, Z_a = calc_f(t, p_set, alpha)
+			preserves = find_min(Z, Z_a, True)
+			
+			print('p =', p_set)
+			
+			_ = plot_surface(t, p_set, alpha, True, 
+				show_from_two_angles, xy_angle, z_angle)
+	
+\end{minted}
+
+\subsection{Програма 2}
+
+\begin{minted}{python}
+	
+	import numpy as np
+	import matplotlib.pyplot as plt
+	import sys
+	import math
+	
+	from scipy.spatial import ConvexHull
+	
+	np.set_printoptions(threshold=sys.maxsize)
+	
+	figure_size = 5
+	plt.rcParams["figure.figsize"] = (figure_size, figure_size)
+	
+	x_interval = [-1, 1]
+	y_interval = [-1, 1]
+	
+	step_interval = 100
+	
+	alpha = 0.5
+	epsilon = 10e-5
+	
+	'''
+	t - array of measure points
+	alpha - given constant
+	
+	Returns an array of averaged zeroes of the function
+	'''
+	def average_zero(t, alpha):    
+		result = np.empty(shape=(0,2), dtype=float)
+		
+		for i in range(0, len(t)):
+		
+			zero = np.empty(shape=(2), dtype=float)
+			
+			zero[0] = t[i, 0] * alpha
+			zero[1] = t[i, 1] * alpha
+			
+			result = np.append(result, [zero], axis=0)
+		
+		return result
+	
+	'''
+	vectors - an array of vectors
+	t - array of measure points
+	alpha - given constant
+	
+	Returns an array of averaged vectors on which
+	the function if given
+	'''
+	def average_vectors(vectors, t, alpha):
+		vectors_count = len(vectors)
+		
+		result = np.empty(shape=(0,vectors_count,2), dtype=float)
+		
+		for i in range(0, len(t)):
+		
+			averaged_vectors = np.empty(shape=(0,2), 
+				dtype=float)
+			
+			for j in range(0, vectors_count):
+				averaged_vector = np.empty(shape=(2), 
+					dtype=float)
+				
+				averaged_vector[0] = vectors[j, 0]
+					+ t[i, 0] * alpha
+				averaged_vector[1] = vectors[j, 1] 
+					+ t[i, 1] * alpha
+				
+				averaged_vectors = np.append(
+					averaged_vectors, 
+					[averaged_vector], axis=0)
+			
+			result = np.append(result, [averaged_vectors], 
+				axis=0)
+		
+		return result
+		
+	'''
+	Returns a list of rays intersections if any
+	
+	line1 - array with a start and an end of the line
+	that respresents the first ray
+	line2 - array with a start and an end of the line
+	that respresents the second ray
+	'''
+	def find_intersection_of_rays(line1, line2):
+	
+		if np.array_equal(line1[0], line2[1]):
+			return line1[0]
+		
+		elif np.array_equal(line2[0], line1[1]):
+			return line2[0]
+		
+		result = np.empty(shape=(2), dtype=float)
+		
+		v1 = [line1[1][0] - line1[0][0], line1[1][1] - line1[0][1]]
+		v2 = [line2[1][0] - line2[0][0], line2[1][1] - line2[0][1]]
+		
+		l1 = np.sqrt(v1[1]**2 + v1[0]**2)
+		l2 = np.sqrt(v2[1]**2 + v2[0]**2)
+		
+		n1 = [v1[0] / l1, v1[1] / l1]
+		n2 = [v2[0] / l2, v2[1] / l2]
+		
+		dx = line2[0][0] - line1[0][0]
+		dy = line2[0][1] - line1[0][1]
+		
+		det = n2[0] * n1[1] - n1[0] * n2[1]
+		
+		if det != 0:
+			u = (dy * n2[0] - dx * n2[1]) / det
+			v = (dy * n1[0] - dx * n1[1]) / det
+		
+			if u >= 0 and v >= 0:
+				if n1[0] == 0 or n2[0] == 0:
+					m0 = n1[1] / (n1[0] + epsilon)
+					m1 = n2[1] / (n2[0] + epsilon)
+				else:
+					m0 = n1[1] / n1[0]
+					m1 = n2[1] / n2[0]
+			
+			b0 = line1[0][1] - m0 * line1[0][0]
+			b1 = line2[0][1] - m1 * line2[0][0]
+			
+			x = (b1 - b0) / (m0 - m1)
+			y = m0 * x + b0
+			
+			result = [x, y]
+			
+			return result
+			print(result)
+		
+	# Main
+	
+	initial_vectors = np.array([[0, 1], [1, -1], [-1, -1]])
+	t = np.array([[1, 0.5], [-1, 1], [0, -1]])
+	
+	averaged_vectors = average_vectors(initial_vectors, t, alpha)
+	averaged_zero = average_zero(t, alpha)
+	
+	points = np.empty(shape=(0,2), dtype=float)
+	
+	for l in range(0, len(averaged_zero)):
+		start1 = averaged_zero[l]
+		end1_list = averaged_vectors[l]
+		
+		for i in range(0, len(initial_vectors)):
+			end1 = end1_list[i]
+			
+			for j in range(l + 1, len(t)):
+				start2 = averaged_zero[j]
+				end2_list = averaged_vectors[j]
+				
+				for k in range(0, len(initial_vectors)):
+					end2 = end2_list[k]
+					
+					point = 
+					find_intersection_of_rays(
+					[start1, end1], 
+					[start2, end2])
+					
+					if point is not None and not 
+					np.isnan(point).any():
+						points = np.append(
+						points, 
+						[point], 
+						axis=0)
+	
+	convexFigure = np.concatenate((points, averaged_zero))
+	
+	hull = ConvexHull(convexFigure)
+	
+	fig, (ax1, ax2) = plt.subplots(ncols=2, figsize=(10, 3))
+	
+	for i in range(0, len(initial_vectors)):
+		x_values = [0, initial_vectors[i, 0]]
+		y_values = [0, initial_vectors[i, 1]]
+	
+	plt.plot(x_values, y_values, color='green')
+	
+	x_values = [averaged_zero[0, 0], averaged_vectors[0, 2, 0]]
+	y_values = [averaged_zero[0, 1], averaged_vectors[0, 2, 1]]
+	
+	for i in range(0, len(averaged_vectors)):
+		for j in range(0, len(averaged_vectors[i])):
+			x_values = [averaged_zero[i, 0], 
+				averaged_vectors[i, j, 0]]
+			y_values = [averaged_zero[i, 1], 
+				averaged_vectors[i, j, 1]]
+		
+			plt.plot(x_values, y_values, color='blue')
+	
+	for ax in (ax1, ax2):
+		ax.plot(convexFigure[:, 0], convexFigure[:, 1],
+			 '.', color='k')
+		
+		if ax == ax1:
+			ax.set_title('Given points')
+		else:
+			ax.set_title('Convex hull')
+			for simplex in hull.simplices:
+				ax.plot(convexFigure[simplex, 0], 
+				convexFigure[simplex, 1], 'c')
+			
+			ax.plot(convexFigure[hull.vertices, 0], 
+			convexFigure[hull.vertices, 1], 'o', mec='r', 
+			color='none', lw=1, markersize=10)
+	
+	plt.show()
+	
+	
+\end{minted}
+	
+\end{document}
